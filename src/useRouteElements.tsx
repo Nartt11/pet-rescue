@@ -7,6 +7,7 @@ import ClientLayout from "./layout/ClientLayout";
 import AdminLayout from "./layout/AdminLayout";
 import ManagePetsPage from "./pages/admin/ManagePetsPage";
 import ManageOrganizationsPage from "./pages/admin/ManageOrganizationsPage";
+import PetDetailPage from "./pages/admin/PetDetailPage";
 
 export default function useRouteElements() {
   const element = useRoutes([
@@ -40,6 +41,10 @@ export default function useRouteElements() {
         {
           path: "organizations",
           element: <ManageOrganizationsPage />,
+        },
+        {
+          path: "pets/:id",
+          element: <PetDetailPage />, // placeholder, sẽ thay bằng PetDetailPage
         },
       ],
     },

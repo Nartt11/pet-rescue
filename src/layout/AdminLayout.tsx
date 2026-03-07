@@ -1,5 +1,3 @@
-import React from "react";
-
 import { Breadcrumb, Layout, theme } from "antd";
 import AdminSidebar from "../components/common/AdminSidebar";
 import AdminHeader from "../components/common/AdminHeader";
