@@ -8,8 +8,13 @@ import {
   List,
   Button,
 } from "antd";
-import PetImageGallery from "../../components/pet/PetImageGallery";
+// import PetImageGallery from "../../components/pet/PetImageGallery";
 import { EditOutlined } from "@ant-design/icons";
+import { lazy, Suspense } from "react";
+
+const PetImageGallery = lazy(() =>
+  import("../../components/pet/PetImageGallery"),
+);
 
 /* ================= TYPES ================= */
 
@@ -141,7 +146,9 @@ export default function PetDetailPage() {
             <Row gutter={24}>
               {/* IMAGE COLUMN */}
               <Col xs={24} lg={12}>
-                <PetImageGallery images={pet.imageUrls} />
+                <Suspense fallback={<div>Loading images...</div>}>
+                  <PetImageGallery images={pet.imageUrls} />
+                </Suspense>
               </Col>
 
               {/* INFO COLUMN */}

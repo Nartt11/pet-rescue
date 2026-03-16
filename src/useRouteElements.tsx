@@ -1,5 +1,5 @@
 import { useRoutes } from "react-router-dom";
-import Home from "./pages/Home";
+import Home from "./pages/client/Home";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -8,23 +8,37 @@ import AdminLayout from "./layout/AdminLayout";
 import ManagePetsPage from "./pages/admin/ManagePetsPage";
 import ManageOrganizationsPage from "./pages/admin/ManageOrganizationsPage";
 import PetDetailPage from "./pages/admin/PetDetailPage";
+import AdoptionPage from "./pages/client/AdoptionPage";
+import NewsPage from "./pages/client/NewsPage";
+import MapPage from "./pages/client/MapPage";
 
 export default function useRouteElements() {
   const element = useRoutes([
     {
       path: "/",
-      element: (
-        <ClientLayout>
-          <Home />
-        </ClientLayout>
-      ),
-      //   children: [
-      //     {
-      //       path: "messages",
-      //       element: <DashboardMessages />,
-      //     },
-      //     { path: "tasks", element: <DashboardTasks /> },
-      //   ],
+      element: <ClientLayout />,
+      children: [
+        {
+          index: true, // route mặc định khi vào /
+          element: <Home />,
+        },
+        {
+          path: "adoption",
+          element: <AdoptionPage />,
+        },
+        {
+          path: "maps",
+          element: <MapPage />,
+        },
+        {
+          path: "contract",
+          element: <AdoptionPage />,
+        },
+        {
+          path: "news",
+          element: <NewsPage />,
+        },
+      ],
     },
     {
       path: "/admin",
