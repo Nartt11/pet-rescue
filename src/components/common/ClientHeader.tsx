@@ -12,7 +12,7 @@ const tabs = [
 export default function ClientHeader() {
   const nav = useNavigate();
   return (
-    <header className="w-full top-0 z-50 bg-transparent flex items-center justify-between py-4 px-10">
+    <header className="top-0 z-50 bg-transparent flex items-center justify-between py-4 px-10">
       <div className="flex items-center space-x-4">
         <Logo />
 

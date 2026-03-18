@@ -1,4 +1,19 @@
+import { useState } from "react";
+import { login } from "../services/authService";
+
 export default function Login() {
+  const [emailOrUsername, setEmailOrUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const loginData = {
+      emailOrUsername,
+      password,
+    };
+    const res = await login(loginData);
+    console.log("check response from call login api: ", res.data);
+  };
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-100 px-4">
       <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-md">
@@ -13,7 +28,7 @@ export default function Login() {
         </div>
 
         {/* Form */}
-        <form className="space-y-5">
+        <form className="space-y-5" onSubmit={handleSubmit}>
           <div className="space-y-1">
             <label
               className="text-sm font-medium text-slate-700"
@@ -23,8 +38,10 @@ export default function Login() {
             </label>
             <input
               id="email"
-              type="email"
+              type="text"
               placeholder="Placeholder"
+              value={emailOrUsername}
+              onChange={(e) => setEmailOrUsername(e.target.value)}
               className="w-full rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 focus:bg-white focus:ring-1 focus:ring-blue-500"
             />
           </div>
@@ -40,6 +57,8 @@ export default function Login() {
               id="password"
               type="password"
               placeholder="Placeholder"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="w-full rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 focus:bg-white focus:ring-1 focus:ring-blue-500"
             />
             <p className="mt-1 text-xs text-slate-400">

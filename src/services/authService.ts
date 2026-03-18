@@ -1,36 +1,25 @@
-// import { apiSpring } from "./api";
-// import type { LoginRequest, LoginResponse } from "../types/auth";
-// import axios from "axios";
+import axios from "axios";
 
 import type { LoginRequest, LoginResponse } from "../types/auth.type";
-export async function login(body: LoginRequest): Promise<LoginResponse> {
-  const { username, password } = body;
+import api from "./api";
+import type { ApiResponse } from "../types/api.type";
+export async function login(
+  body: LoginRequest,
+): Promise<ApiResponse<LoginResponse>> {
+  try {
+    const response = await api.post<ApiResponse<LoginResponse>>(
+      "/auth/login",
+      body,
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("Axios error message: ", error.message);
+      throw new Error(`Axios error: ${error.message}`);
+    }
 
-  const response = {
-    accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.access.token.example",
-    refreshToken: password,
-    role: username,
-    userId: 1,
-  };
-  return response;
-  //   try {
-  //     const response = await apiSpring.post<LoginResponse>("/auth/login", body);
-
-  //     console.log("check reponse from call api /auth/login: ", response);
-  //     console.log(
-  //       "check reponse.data from call api /auth/login: ",
-  //       response.data,
-  //     );
-
-  //     return response.data;
-  //   } catch (error) {
-  //     if (axios.isAxiosError(error)) {
-  //       console.error("Axios error message: ", error.message);
-  //       throw new Error(`Axios error: ${error.message}`);
-  //     }
-
-  //     throw error;
-  //   }
+    throw error;
+  }
 }
 
 // export async function logout(refreshToken: string): Promise<void> {

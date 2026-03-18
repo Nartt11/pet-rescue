@@ -1,11 +1,25 @@
 export interface LoginRequest {
-  username: string;
+  emailOrUsername: string;
   password: string;
 }
 
 export interface LoginResponse {
   accessToken: string;
   refreshToken: string;
-  role: string;
-  userId: number;
+  tokenType: string;
+  expiresIn: number;
+  user: User;
+}
+
+type UserStatus = "PENDING_VERIFICATION" | "ACTIVE" | "SUSPENDED";
+export interface User {
+  readonly userId: number;
+  username: string;
+  email: string;
+  fullName: string;
+  status: UserStatus;
+  emailVerified: boolean;
+  roles: string[];
+  createdAt: string;
+  updatedAt: string;
 }

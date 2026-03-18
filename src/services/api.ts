@@ -1,10 +1,10 @@
 import axios from "axios";
 import type { AxiosInstance } from "axios";
 
-const API_PORT = import.meta.env.VITE_API_PORT_SPRING || "8080";
+// const API_PORT = import.meta.env.VITE_API_PORT_SPRING || "8080";
 
 const api: AxiosInstance = axios.create({
-  baseURL: `http://localhost:${API_PORT}/api/v1`,
+  baseURL: `https://pet-rescue-api-0uhx.onrender.com/api/v1`,
   headers: {
     "Content-Type": "application/json",
   },

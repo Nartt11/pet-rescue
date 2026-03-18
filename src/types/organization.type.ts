@@ -3,6 +3,13 @@ export interface Organization {
   name: string;
   type: string;
   status: string;
+  streetAddress: string;
+  wardCode: string;
+  ward: string;
+  provinceCode: string;
+  province: string;
+  phone: string;
+  email: string;
 }
 export interface OrganizationResponse {
   content: Organization[];

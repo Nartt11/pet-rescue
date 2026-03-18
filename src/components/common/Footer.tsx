@@ -2,9 +2,9 @@ import Logo from "./Logo";
 
 export default function Footer() {
   return (
-    <footer className="mt-16 bg-[#FFEED9] pt-16 pb-8 text-slate-700">
+    <footer className=" mt-16 bg-[#FFEED9] pt-16 pb-8 text-slate-700">
       {/* Subscribe section */}
-      <div className="mx-auto max-w-5xl rounded-xl bg-[#002A48] px-8 py-8 text-white shadow-lg">
+      <div className="mx-auto max-w-6xl  container rounded-xl bg-[#002A48] px-8 py-8 text-white shadow-lg">
         <div className="flex flex-col items-center gap-6 md:flex-row md:items-center md:justify-between">
           <div className="text-center md:text-left">
             <p className="text-lg font-semibold md:text-xl">

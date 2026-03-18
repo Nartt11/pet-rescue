@@ -1,3 +1,9 @@
+import AdoptionProcess from "../../components/adoption/AdoptionProcess";
+
 export default function AdoptionPage() {
-  return <div>AdoptionPage</div>;
+  return (
+    <div>
+      <AdoptionProcess />
+    </div>
+  );
 }

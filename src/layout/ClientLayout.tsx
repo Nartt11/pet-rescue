@@ -1,4 +1,3 @@
-import React from "react";
 import ClientHeader from "../components/common/ClientHeader";
 import Footer from "../components/common/Footer";
 import { Outlet } from "react-router-dom";
