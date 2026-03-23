@@ -11,7 +11,7 @@ export interface LoginResponse {
   user: User;
 }
 
-type UserStatus = "PENDING_VERIFICATION" | "ACTIVE" | "SUSPENDED";
+type UserStatus = "PENDING_VERIFICATION" | "ACTIVE" | "INACTIVE" | "BANNED";
 export interface User {
   readonly userId: number;
   username: string;

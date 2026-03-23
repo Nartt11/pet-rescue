@@ -1,19 +1,56 @@
-import { useState } from "react";
-import { login } from "../services/authService";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import axios from "axios";
 
 export default function Login() {
+  const navigate = useNavigate();
+  const { login, isLoggingIn, user } = useAuth();
+
   const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const loginData = {
-      emailOrUsername,
-      password,
-    };
-    const res = await login(loginData);
-    console.log("check response from call login api: ", res.data);
+    login(
+      { emailOrUsername, password },
+      {
+        onSuccess: () => {
+          setIsSubmitted(true);
+        },
+
+        onError: (error: unknown) => {
+          let message = "Đăng nhập thất bại";
+
+          // 🔥 lấy lỗi từ BE (nếu có)
+          if (axios.isAxiosError(error)) {
+            message = error.response?.data?.message || message;
+          } else if (error instanceof Error) {
+            message = error.message;
+          }
+
+          // toast.error(message);
+          alert(message);
+        },
+      },
+    );
   };
+
+  useEffect(() => {
+    if (isSubmitted && user) {
+      // toast.success("Login thành công 🎉");
+      alert("Login thành công 🎉");
+
+      // redirect theo role
+      if (user.roles.includes("ADMIN")) {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
+    }
+  }, [user, isSubmitted, navigate]);
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-100 px-4">
       <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-md">
@@ -86,9 +123,10 @@ export default function Login() {
 
           <button
             type="submit"
+            disabled={isLoggingIn}
             className="mt-2 w-full rounded-md bg-blue-600 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
           >
-            Log In
+            {isLoggingIn ? "Logging..." : "Login"}
           </button>
         </form>
 

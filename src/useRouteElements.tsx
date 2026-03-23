@@ -11,6 +11,7 @@ import PetDetailPage from "./pages/admin/PetDetailPage";
 import AdoptionPage from "./pages/client/AdoptionPage";
 import NewsPage from "./pages/client/NewsPage";
 import MapPage from "./pages/client/MapPage";
+import { RequireRole } from "./components/RequireRole";
 
 export default function useRouteElements() {
   const element = useRoutes([
@@ -42,7 +43,11 @@ export default function useRouteElements() {
     },
     {
       path: "/admin",
-      element: <AdminLayout />,
+      element: (
+        <RequireRole role="ADMIN">
+          <AdminLayout />
+        </RequireRole>
+      ),
       children: [
         {
           index: true, // route mặc định khi vào /admin
