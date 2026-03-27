@@ -2,7 +2,7 @@ export interface Organization {
   organizationId: string;
   name: string;
   type: string;
-  status: string;
+  status: OrganizationStatus;
   streetAddress: string;
   wardCode: string;
   ward: string;
@@ -11,6 +11,15 @@ export interface Organization {
   phone: string;
   email: string;
 }
+export interface OrganizationDetail extends Organization {
+  officialLink: string;
+  latitude: number;
+  longitude: number;
+  createdAt: string;
+  createBy: string;
+}
+
+export type OrganizationStatus = "ACTIVE" | "INACTIVE" | "PENDING";
 // export interface OrganizationResponse {
 //   content: Organization[];
 //   page: number;

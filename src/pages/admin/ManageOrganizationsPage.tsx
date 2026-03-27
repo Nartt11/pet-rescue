@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import {
   Card,
   Button,
@@ -17,91 +17,42 @@ import {
   FilterOutlined,
   DownloadOutlined,
 } from "@ant-design/icons";
-
-/* ================= TYPES ================= */
-
-interface Organization {
-  organizationId: string;
-  name: string;
-  type: string;
-  status: string;
-}
-
-interface OrganizationDetail extends Organization {
-  description?: string;
-  createdAt?: string;
-  address?: string;
-}
-
-/* ================= MOCK DATA ================= */
-
-const organizations: Organization[] = [
-  {
-    organizationId: "1",
-    name: "Happy Paws Shelter",
-    type: "SHELTER",
-    status: "ACTIVE",
-  },
-  {
-    organizationId: "2",
-    name: "Pet Rescue Center",
-    type: "RESCUE",
-    status: "ACTIVE",
-  },
-  {
-    organizationId: "3",
-    name: "Animal Care Group",
-    type: "NGO",
-    status: "INACTIVE",
-  },
-];
+import type {
+  Organization,
+  OrganizationDetail,
+} from "../../types/organization.type";
+import {
+  useOrganization,
+  useOrganizationDetail,
+} from "../../hooks/useOrganization";
+import { useSearchParams } from "react-router-dom";
 
 /* ================= COMPONENT ================= */
 
 export default function ManageOrganizationsPage() {
-  const [expandedData, setExpandedData] = useState<
-    Record<string, OrganizationDetail>
-  >({});
-  const [loading, setLoading] = useState<Record<string, boolean>>({});
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  /* ================= MOCK API ================= */
+  const page = Number(searchParams.get("page")) || 0;
+  const pageSize = Number(searchParams.get("pageSize")) || 10;
 
-  const fetchOrganizationDetail = async (
-    id: string,
-  ): Promise<OrganizationDetail> => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          organizationId: id,
-          name: "Happy Paws Shelter",
-          type: "SHELTER",
-          status: "ACTIVE",
-          description: "A non-profit organization helping homeless pets.",
-          address: "123 Rescue Street, New York",
-          createdAt: "2023-05-10",
-        });
-      }, 800);
+  const handleChangePage = (page: number, pageSize: number) => {
+    setSearchParams({
+      page: String(page),
+      pageSize: String(pageSize),
     });
   };
 
-  /* ================= HANDLE EXPAND ================= */
+  useEffect(() => {
+    if (!searchParams.get("page") || !searchParams.get("pageSize")) {
+      setSearchParams({
+        page: "0",
+        pageSize: "10",
+      });
+    }
+  }, []);
 
-  const handleExpand = async (expanded: boolean, record: Organization) => {
-    if (!expanded) return;
-
-    if (expandedData[record.organizationId]) return;
-
-    setLoading((prev) => ({ ...prev, [record.organizationId]: true }));
-
-    const detail = await fetchOrganizationDetail(record.organizationId);
-
-    setExpandedData((prev) => ({
-      ...prev,
-      [record.organizationId]: detail,
-    }));
-
-    setLoading((prev) => ({ ...prev, [record.organizationId]: false }));
-  };
+  const { isPending, error, data } = useOrganization(page, pageSize);
+  console.log(data?.content);
 
   /* ================= TABLE COLUMNS ================= */
 
@@ -115,6 +66,11 @@ export default function ManageOrganizationsPage() {
       title: "Type",
       dataIndex: "type",
       key: "type",
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
     },
     {
       title: "Status",
@@ -141,53 +97,69 @@ export default function ManageOrganizationsPage() {
   ];
 
   /* ================= EXPAND DETAIL ================= */
+  const ExpandedRow = ({ id }: { id: string }) => {
+    const { data, isPending } = useOrganizationDetail(id);
 
-  const renderExpandedRow = (record: Organization) => {
-    const detail = expandedData[record.organizationId];
-    const isLoading = loading[record.organizationId];
-
-    if (isLoading) {
-      return <Spin />;
-    }
-
-    if (!detail) return null;
+    if (isPending) return <Spin />;
+    const organizationDetail: OrganizationDetail = data as OrganizationDetail;
 
     return (
-      <Card size="small">
-        <Row gutter={16}>
-          <Col span={12}>
-            <Descriptions column={1} size="small">
-              <Descriptions.Item label="Organization ID">
-                {detail.organizationId}
-              </Descriptions.Item>
+      <div>
+        <Card
+          size="small"
+          variant="outlined"
+          title={
+            <div className="py-2">
+              <div className="flex items-center gap-2">
+                <div style={{ fontWeight: 600 }}>{organizationDetail.name}</div>
+                <Tag
+                  color={
+                    organizationDetail.status === "ACTIVE" ? "green" : "red"
+                  }
+                >
+                  {organizationDetail.status}
+                </Tag>
+              </div>
+              <div style={{ fontSize: 12, color: "#888" }}>
+                Created at:{" "}
+                {new Date(organizationDetail.createdAt).toLocaleString()} by:{" "}
+                {organizationDetail.createBy}
+              </div>
+            </div>
+          }
+        >
+          <Row gutter={16}>
+            <Col span={12}>
+              <Descriptions column={1} size="small">
+                <Descriptions.Item label="Type">
+                  {organizationDetail.type}
+                </Descriptions.Item>
 
-              <Descriptions.Item label="Name">{detail.name}</Descriptions.Item>
+                <Descriptions.Item label="Phone">
+                  {organizationDetail.phone}
+                </Descriptions.Item>
+                <Descriptions.Item label="Email">
+                  {organizationDetail.email}
+                </Descriptions.Item>
 
-              <Descriptions.Item label="Type">{detail.type}</Descriptions.Item>
+                <Descriptions.Item label="Official Link">
+                  <a href={organizationDetail.officialLink} target="_blank">
+                    {organizationDetail.officialLink}
+                  </a>
+                  {/* {organizationDetail.officialLink} */}
+                </Descriptions.Item>
 
-              <Descriptions.Item label="Status">
-                {detail.status}
-              </Descriptions.Item>
-            </Descriptions>
-          </Col>
+                <Descriptions.Item label="Address">
+                  {`${organizationDetail.streetAddress}, ${organizationDetail.ward}, ${organizationDetail.province}`}
+                </Descriptions.Item>
+              </Descriptions>
+            </Col>
 
-          <Col span={12}>
-            <Descriptions column={1} size="small">
-              <Descriptions.Item label="Address">
-                {detail.address}
-              </Descriptions.Item>
-
-              <Descriptions.Item label="Created At">
-                {detail.createdAt}
-              </Descriptions.Item>
-
-              <Descriptions.Item label="Description">
-                {detail.description}
-              </Descriptions.Item>
-            </Descriptions>
-          </Col>
-        </Row>
-      </Card>
+            {/* map */}
+            <Col span={12}></Col>
+          </Row>
+        </Card>
+      </div>
     );
   };
 
@@ -214,13 +186,21 @@ export default function ManageOrganizationsPage() {
           </Space>
         }
       >
+        {error && <div style={{ color: "red" }}>{error.message}</div>}
         <Table<Organization>
+          loading={isPending}
           rowKey="organizationId"
           columns={columns}
-          dataSource={organizations}
+          dataSource={data?.content}
           expandable={{
-            expandedRowRender: renderExpandedRow,
-            onExpand: handleExpand,
+            expandedRowRender: (record) => (
+              <ExpandedRow id={record.organizationId} />
+            ),
+          }}
+          pagination={{
+            current: page + 1,
+            pageSize: pageSize,
+            onChange: (p, ps) => handleChangePage(p, ps),
           }}
         />
       </Card>
