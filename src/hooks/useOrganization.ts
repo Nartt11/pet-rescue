@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { organizationService } from "../services/organizationService";
 import type { Organization } from "../types/organization.type";
+import { message } from "antd";
 
 // Lấy danh sách có phân trang (bạn đã có)
 export const useOrganization = (page: number, size: number) => {
@@ -40,8 +41,10 @@ export const useUpdateOrganization = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: { id: string; data: Partial<Organization> }) =>
-      organizationService.updateOrganization(payload.id, payload.data),
+    mutationFn: (payload: {
+      id: string;
+      data: Partial<Omit<Organization, "organizationId">>;
+    }) => organizationService.updateOrganization(payload.id, payload.data),
 
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["organizations"] });
@@ -52,15 +55,15 @@ export const useUpdateOrganization = () => {
   });
 };
 
-// Xóa organization
-// export const useDeleteOrganization = () => {
-//   const queryClient = useQueryClient();
+export const useDeleteOrganization = () => {
+  const queryClient = useQueryClient();
 
-//   return useMutation({
-//     mutationFn: (id: number) => organizationService.deleteOrganization(id),
+  return useMutation({
+    mutationFn: (id: string) => organizationService.deleteOrganization(id),
 
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({ queryKey: ["organizations"] });
-//     },
-//   });
-// };
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["organizations"] });
+      message.success("Organization deleted successfully");
+    },
+  });
+};

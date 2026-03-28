@@ -10,14 +10,16 @@ export interface Organization {
   province: string;
   phone: string;
   email: string;
-}
-export interface OrganizationDetail extends Organization {
   officialLink: string;
   latitude: number;
   longitude: number;
   createdAt: string;
   createBy: string;
 }
+export type OrganizationSummary = Omit<
+  Organization,
+  "latitude" | "longitude" | "createdAt" | "createBy"
+>;
 
 export type OrganizationStatus = "ACTIVE" | "INACTIVE" | "PENDING";
 // export interface OrganizationResponse {

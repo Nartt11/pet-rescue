@@ -1,8 +1,8 @@
 import type { ApiResponse, PaginatedResponse } from "../types/api.type";
 import type {
   Organization,
-  OrganizationDetail,
   OrganizationStatus,
+  OrganizationSummary,
 } from "../types/organization.type";
 import api from "./api";
 
@@ -10,9 +10,9 @@ export const organizationService = {
   getAllOrganizations: async (
     page: number,
     size: number,
-  ): Promise<PaginatedResponse<Organization>> => {
+  ): Promise<PaginatedResponse<OrganizationSummary>> => {
     const response = await api.get<
-      ApiResponse<PaginatedResponse<Organization>>
+      ApiResponse<PaginatedResponse<OrganizationSummary>>
     >("/organizations", {
       params: { page, size }, // ✅ đúng cú pháp
     });
@@ -24,8 +24,8 @@ export const organizationService = {
     return response.data.data;
   },
 
-  getById: async (id: string): Promise<OrganizationDetail> => {
-    const response = await api.get<ApiResponse<OrganizationDetail>>(
+  getById: async (id: string): Promise<Organization> => {
+    const response = await api.get<ApiResponse<Organization>>(
       `/organizations/${id}`,
     );
     return response.data.data;
@@ -57,6 +57,13 @@ export const organizationService = {
     const response = await api.put<ApiResponse<Organization>>(
       `/organizations/${id}`,
       orgData,
+    );
+    return response.data;
+  },
+
+  deleteOrganization: async (id: string) => {
+    const response = await api.delete<ApiResponse<null>>(
+      `/organizations/${id}`,
     );
     return response.data;
   },

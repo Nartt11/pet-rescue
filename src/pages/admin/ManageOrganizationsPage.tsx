@@ -10,6 +10,7 @@ import {
   Col,
   Descriptions,
   Spin,
+  message,
 } from "antd";
 import type { TableColumnsType } from "antd";
 import {
@@ -19,13 +20,15 @@ import {
 } from "@ant-design/icons";
 import type {
   Organization,
-  OrganizationDetail,
+  OrganizationSummary,
 } from "../../types/organization.type";
 import {
+  useDeleteOrganization,
   useOrganization,
   useOrganizationDetail,
 } from "../../hooks/useOrganization";
 import { useSearchParams } from "react-router-dom";
+import { DeleteConfirmButton } from "../../components/DeleteConfirmButton";
 
 /* ================= COMPONENT ================= */
 
@@ -53,10 +56,21 @@ export default function ManageOrganizationsPage() {
 
   const { isPending, error, data } = useOrganization(page, pageSize);
   console.log(data?.content);
+  /* ================= HANDLE DELETE ================= */
+  const { mutateAsync: deleteOrganization } = useDeleteOrganization();
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteOrganization(id);
+    } catch (error: unknown) {
+      // message.error("Failed to delete organization");
+      message.error("Failed to delete organization: ");
+      throw error;
+    }
+  };
 
   /* ================= TABLE COLUMNS ================= */
 
-  const columns: TableColumnsType<Organization> = [
+  const columns: TableColumnsType<OrganizationSummary> = [
     {
       title: "Organization Name",
       dataIndex: "name",
@@ -83,14 +97,18 @@ export default function ManageOrganizationsPage() {
     {
       title: "Action",
       key: "action",
-      render: () => (
+      render: (_: null, record: OrganizationSummary) => (
         <Space>
           <Button type="primary" size="small" style={{ marginRight: 8 }}>
             Edit
           </Button>
-          <Button danger size="small">
+          {/* <Button danger size="small">
             Delete
-          </Button>
+          </Button> */}
+          <DeleteConfirmButton
+            entityName={`organization "${record.name}"`}
+            onConfirm={() => handleDelete(record.organizationId)}
+          />
         </Space>
       ),
     },
@@ -101,7 +119,7 @@ export default function ManageOrganizationsPage() {
     const { data, isPending } = useOrganizationDetail(id);
 
     if (isPending) return <Spin />;
-    const organizationDetail: OrganizationDetail = data as OrganizationDetail;
+    const organizationDetail: Organization = data as Organization;
 
     return (
       <div>
@@ -187,7 +205,7 @@ export default function ManageOrganizationsPage() {
         }
       >
         {error && <div style={{ color: "red" }}>{error.message}</div>}
-        <Table<Organization>
+        <Table<OrganizationSummary>
           loading={isPending}
           rowKey="organizationId"
           columns={columns}
