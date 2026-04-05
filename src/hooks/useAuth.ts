@@ -2,27 +2,34 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { authService } from "../services/authService";
 import type { LoginRequest } from "../types/auth.type";
+import api from "@/services/api";
+
 export function useLogin() {
   const queryClient = useQueryClient();
 
-  return useMutation<TokenResponse, Error, LoginRequest>({
-    mutationFn: async (credentials) => {
-      const response = await baseApi.post<unknown, LoginRequest>(
-        "/auth/login",
-        credentials,
-      );
-      return parseTokenResponse(response);
+  return useMutation({
+    mutationFn: async (data: LoginRequest) => {
+      const res = await api.post("/auth/login", data);
+      return res.data;
     },
+
     onSuccess: (data) => {
-      tokenManager.setTokens({
-        accessToken: data.accessToken,
-        refreshToken: data.refreshToken,
-        expiresAt: data.expiresIn
-          ? Date.now() + data.expiresIn * 1000
-          : undefined,
-      });
-      queryClient.invalidateQueries({ queryKey: queryKeys.auth.all });
-      window.location.assign("/reports");
+      localStorage.setItem("accessToken", data.data.accessToken);
+
+      queryClient.invalidateQueries({ queryKey: ["me"] });
+      window.location.href = "/"; // Redirect to home page after successful login
     },
+
+    onError: (error) => {
+      console.error("Login error:", error);
+    },
+  });
+}
+
+export function useMe() {
+  return useQuery({
+    queryKey: ["me"],
+    queryFn: () => authService.getMe(),
+    staleTime: 1000 * 60 * 5,
   });
 }

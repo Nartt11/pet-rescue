@@ -1,4 +1,4 @@
-import { useRoutes } from "react-router-dom";
+import { useRoutes } from "react-router";
 import Home from "./pages/client/Home";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import Login from "./pages/Login";

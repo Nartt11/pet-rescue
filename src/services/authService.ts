@@ -16,9 +16,13 @@ export const authService = {
     try {
       const res = await api.post("/auth/login", LoginRequest);
 
+      console.log("Login response api :", res);
+
       return res.data;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
+      console.log("Login error api :", error);
+
       throw new Error(error?.response?.data?.message || "Login failed");
     }
   },
