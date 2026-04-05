@@ -1,9 +1,10 @@
-export interface LoginRequest {
-  emailOrUsername: string;
-  password: string;
-}
+import type z from "zod";
+import type { loginSchema, registerSchema } from "../libs/schemas/auth-schemas";
 
-export interface LoginResponse {
+export type RegisterRequest = z.infer<typeof registerSchema>;
+export type LoginRequest = z.infer<typeof loginSchema>;
+
+export interface AuthResponse {
   accessToken: string;
   refreshToken: string;
   tokenType: string;

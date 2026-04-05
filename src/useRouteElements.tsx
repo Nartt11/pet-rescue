@@ -12,6 +12,7 @@ import AdoptionPage from "./pages/client/AdoptionPage";
 import NewsPage from "./pages/client/NewsPage";
 import MapPage from "./pages/client/MapPage";
 import { RequireRole } from "./components/RequireRole";
+import AuthLayout from "./layout/AuthLayout";
 
 export default function useRouteElements() {
   const element = useRoutes([
@@ -67,7 +68,16 @@ export default function useRouteElements() {
         },
       ],
     },
-    { path: "/login", element: <Login /> },
+    {
+      path: "/login",
+      element: <AuthLayout />,
+      children: [
+        {
+          index: true,
+          element: <Login />,
+        },
+      ],
+    },
     { path: "/register", element: <Register /> },
   ]);
 
